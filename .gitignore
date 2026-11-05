@@ -1,0 +1,12 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.log
+*.tsbuildinfo
+
+# 构建/部署临时产物
+.deploy-scratch/
+output/orbit_frames/
+*.blend1
+render-pipeline.done

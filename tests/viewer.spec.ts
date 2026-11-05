@@ -1,0 +1,81 @@
+import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+
+for (const viewport of [{ width: 1440, height: 1080 }, { width: 390, height: 844 }]) {
+  test(`viewer workflow ${viewport.width}`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto('/');
+    await expect(page.locator('.app-shell')).toHaveClass(/immersive/);
+    await expect(page.locator('.stage-label strong')).toHaveText('青花碗 · 牛肉面');
+    await expect(page.getByText('实时三维', { exact: true })).toBeVisible({ timeout: 60000 });
+    const canvas = page.locator('canvas');
+    await expect(canvas).toBeVisible();
+    const pixels = await canvas.evaluate((element: HTMLCanvasElement) => {
+      const gl = element.getContext('webgl2');
+      if (!gl) throw new Error('No WebGL2 context');
+      const data = new Uint8Array(element.width * element.height * 4);
+      gl.readPixels(0, 0, element.width, element.height, gl.RGBA, gl.UNSIGNED_BYTE, data);
+      let colored = 0;
+      for (let i = 0; i < data.length; i += 4) if (data[i] > data[i + 2] * 1.3 && data[i] > 70) colored++;
+      return { colored, total: element.width * element.height };
+    });
+    expect(pixels.colored / pixels.total).toBeGreaterThan(.005);
+    await page.screenshot({ path: `test-results/desktop-${viewport.width}.png`, fullPage: true });
+    const clip = await canvas.boundingBox();
+    const before = await page.screenshot({ clip });
+    await page.getByRole('button', { name: '自动旋转', exact: true }).click();
+    await expect(page.getByRole('button', { name: '暂停旋转' })).toHaveAttribute('aria-pressed', 'true');
+    await page.waitForTimeout(2500);
+    const after = await page.screenshot({ clip });
+    expect(before.equals(after)).toBeFalsy();
+    await page.getByRole('button', { name: '暂停旋转' }).click();
+    await page.getByRole('button', { name: '俯视', exact: true }).click();
+    await page.getByRole('button', { name: '复位视角' }).click();
+    await page.getByRole('button', { name: '线框模式' }).click();
+    await expect(page.getByRole('button', { name: '线框模式' })).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: '线框模式' }).click();
+    await page.getByRole('button', { name: '展开档案', exact: true }).click();
+    await expect(page.locator('.app-shell')).not.toHaveClass(/immersive/);
+    await expect(page.getByRole('heading', { name: '一碗牛肉面。' })).toBeVisible();
+    await page.getByRole('tab', { name: '渲染图', exact: true }).click();
+    await expect(page.locator('.gallery-main')).toHaveJSProperty('complete', true);
+    await page.getByRole('button', { name: '下一张', exact: true }).click();
+    await expect(page.locator('.image-caption strong')).toHaveText('近景细节');
+    await page.getByRole('button', { name: '放大图片', exact: true }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+    await page.getByRole('tab', { name: '环绕影像' }).click();
+    const video = page.locator('video');
+    await expect(video).toBeVisible();
+    await video.evaluate(async (v: HTMLVideoElement) => { await v.play(); });
+    await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(0);
+    await page.getByRole('tab', { name: '实拍参考' }).click();
+    await expect(page.locator('.thumbnail')).toHaveCount(4);
+    await expect(page.locator('.gallery-main')).toHaveJSProperty('complete', true);
+    await page.screenshot({ path: `test-results/reference-${viewport.width}.png`, fullPage: true });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+    await page.getByRole('button', { name: '项目信息' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.getByRole('button', { name: '关闭', exact: true }).click();
+    const download = page.getByRole('link', { name: '网页模型 GLB', exact: true });
+    const response = await page.request.get((await download.getAttribute('href'))!);
+    expect(response.status()).toBe(200);
+    expect((await response.body()).byteLength).toBeGreaterThan(1000000);
+    expect(errors).toEqual([]);
+    fs.writeFileSync(`test-results/pixels-${viewport.width}.json`, JSON.stringify(pixels));
+  });
+}
+
+test('model failure falls back to actual render', async ({ page }) => {
+  await page.route('**/lamian.glb', (route) => route.abort());
+  await page.goto('/');
+  await page.getByRole('button', { name: '展开档案', exact: true }).click();
+  await page.getByRole('tab', { name: '三维模型', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('已显示渲染图');
+  await expect(page.locator('.fallback-image')).toBeVisible();
+  await page.getByRole('button', { name: '查看渲染图' }).click();
+  await expect(page.getByRole('tab', { name: '渲染图', exact: true })).toHaveAttribute('aria-selected', 'true');
+});

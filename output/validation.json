@@ -1,0 +1,202 @@
+{
+  "blender": "5.2.3 LTS",
+  "objects": 566,
+  "mesh_objects": 412,
+  "curves": 145,
+  "materials": 45,
+  "cameras": [
+    "01 | Hero reference angle",
+    "02 | Low porcelain study",
+    "03 | Top food detail",
+    "04 | Orbit animation"
+  ],
+  "images": [
+    {
+      "name": "Beef_crown.png",
+      "packed": true,
+      "size": [
+        709,
+        702
+      ]
+    },
+    {
+      "name": "Beef_front.png",
+      "packed": true,
+      "size": [
+        834,
+        671
+      ]
+    },
+    {
+      "name": "Beef_left.png",
+      "packed": true,
+      "size": [
+        402,
+        608
+      ]
+    },
+    {
+      "name": "Beef_right.png",
+      "packed": true,
+      "size": [
+        397,
+        554
+      ]
+    },
+    {
+      "name": "Beef_small.png",
+      "packed": true,
+      "size": [
+        161,
+        204
+      ]
+    },
+    {
+      "name": "Bok_choy_leaf.png",
+      "packed": true,
+      "size": [
+        307,
+        243
+      ]
+    },
+    {
+      "name": "bowl_logo.png",
+      "packed": true,
+      "size": [
+        754,
+        341
+      ]
+    },
+    {
+      "name": "bread_color.jpg",
+      "packed": true,
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "broth_color.jpg",
+      "packed": true,
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "name": "Cabbage_back.png",
+      "packed": true,
+      "size": [
+        219,
+        267
+      ]
+    },
+    {
+      "name": "Cabbage_bottom.png",
+      "packed": true,
+      "size": [
+        364,
+        229
+      ]
+    },
+    {
+      "name": "Cabbage_front.png",
+      "packed": true,
+      "size": [
+        418,
+        303
+      ]
+    },
+    {
+      "name": "Cabbage_right.png",
+      "packed": true,
+      "size": [
+        280,
+        381
+      ]
+    },
+    {
+      "name": "Cabbage_small.png",
+      "packed": true,
+      "size": [
+        213,
+        176
+      ]
+    },
+    {
+      "name": "Egg_back.png",
+      "packed": true,
+      "size": [
+        377,
+        267
+      ]
+    },
+    {
+      "name": "flower_decal.png",
+      "packed": true,
+      "size": [
+        340,
+        262
+      ]
+    },
+    {
+      "name": "Onion_white.png",
+      "packed": true,
+      "size": [
+        258,
+        219
+      ]
+    },
+    {
+      "name": "porcelain_inner.png",
+      "packed": true,
+      "size": [
+        4096,
+        512
+      ]
+    },
+    {
+      "name": "porcelain_outer.png",
+      "packed": true,
+      "size": [
+        4096,
+        1024
+      ]
+    },
+    {
+      "name": "Tomato_cube.png",
+      "packed": true,
+      "size": [
+        179,
+        215
+      ]
+    },
+    {
+      "name": "Tomato_right.png",
+      "packed": true,
+      "size": [
+        209,
+        422
+      ]
+    },
+    {
+      "name": "Wood_ear_1.png",
+      "packed": true,
+      "size": [
+        279,
+        329
+      ]
+    },
+    {
+      "name": "Wood_ear_2.png",
+      "packed": true,
+      "size": [
+        149,
+        225
+      ]
+    }
+  ],
+  "estimated_bowl_diameter_m": 0.298,
+  "method": "Reference-guided 2.5D/3D hybrid: full ceramic, utensils, noodles, table; photo-textured solid ingredient meshes. Not a photogrammetric scan.",
+  "nonfinite_vertices": 0
+}
